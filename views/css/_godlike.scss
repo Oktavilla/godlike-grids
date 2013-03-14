@@ -1,0 +1,26 @@
+@import "reset";
+
+$column-width: 6.25%;
+$gutter-width: 2.08333333333%;
+$total-width: 100%;
+$columns: 12;
+
+
+
+@mixin grid($x: 1, $distribution: (), $units: $columns) {
+  > .part {
+    width: percentage((($column-width + $gutter-width) * ($columns/$x) - $gutter-width + ($gutter-width/$x)) / $total-width);
+    margin: 0 percentage($gutter-width / $total-width) 0 0;
+    float: left;
+    &:nth-child(#{$x}n+#{$x}) {
+      margin-right: 0;
+    }
+    $i: 1;
+    @each $y in $distribution {
+      &:nth-child(n+#{$i}) {
+        width: percentage((($column-width + $gutter-width) * $y - $gutter-width + ($gutter-width/$x)) / $total-width);
+      }
+      $i: $i + 1;
+    }
+  }
+}
