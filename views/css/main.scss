@@ -19,7 +19,7 @@
 }
 .boxes {
   background: purple;
-  @include grid(2, (), 8);
+  @include grid(2, (), 9);
 }
 
 .teaser {
