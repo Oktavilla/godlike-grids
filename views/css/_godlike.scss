@@ -1,10 +1,19 @@
 @import "reset";
 
-$supportsNthChild: true !default;
-$column-width: 6.25%;
-$gutter-width: 2.08333333333%;
-$total-width: 100%;
+$supportlegacyIE: false !default;
+$responsive: true !default;
+
+$column-width: 60px;
+$gutter-width: 20px;
+$total-width: 960px;
 $columns: 12;
+
+.part {
+  padding: 0 $gutter-width 0 0;
+  -webkit-box-sizing: border-box;
+  float: left;
+  clear: right;
+}
 
 .grid-container {
   &:after {
@@ -17,53 +26,56 @@ $columns: 12;
 
 @mixin grid($x: 1, $distribution: (), $units: $columns) {
   > .part {
-    width: percentage((($column-width + $gutter-width) * ($columns/$x) - $gutter-width + ($gutter-width/$x)) / $total-width);
-    margin: 0 percentage($gutter-width / $total-width) 0 0;
-    float: left;
-    @if $supportsNthChild == true {
-      // Use nth-child
-      &:nth-child(#{$x}n+#{$x}) {
-        margin-right: 0;
+    @if $x > 1 {
+      width: percentage((($column-width + $gutter-width) * ($columns/$x)) / $total-width);
+      @if $supportlegacyIE == true {
+        // Use adjacent sibling selectors
+        &#{ie-every-nth-child($x, 10)} {
+          padding-right: 0;
+        }
+      }
+      @else {
+        // Use nth-child
+        &:nth-child(#{$x}n+#{$x}) {
+          padding-right: 0;
+        }
+      }
+      $i: 1;
+      @each $y in $distribution {
+        @if $supportlegacyIE == true {
+          // Use adjacent sibling selectors
+          &#{ie-nth-child($i)} {
+            width: percentage((($column-width + $gutter-width) * $y) / $total-width);
+          }
+        }
+        @else {
+          // Use nth-child
+          &:nth-child(n+#{$i}) {
+            width: percentage((($column-width + $gutter-width) * $y) / $total-width);
+          }
+        }
+        $i: $i + 1;
       }
     }
     @else {
-      // Use adjacent sibling selectors
-      &#{nth-child($x)} {
-        margin-right: 0;
-      }
-    }
-    $i: 1;
-    @each $y in $distribution {
-      &:nth-child(n+#{$i}) {
-        width: percentage((($column-width + $gutter-width) * $y - $gutter-width + ($gutter-width/$x)) / $total-width);
-      }
-      $i: $i + 1;
+      padding-right: 0;
+      float: none;
     }
   }
 }
 
 
-////////////////////////
-// nth-child() support for IE 7 and 8
-////////////////////////
-@function nth-child($n) {
-
-  // If a single number for nth.
-  @if type-of($n) == number {
-    $nth-child: first-child;
-    @for $i from 2 through $n {
-      $nth-child: append($nth-child, #{"+*"});
-    }
-    @return #{":"}$nth-child;
+@function ie-nth-child($n) {
+  $nth-child: first-child;
+  @for $i from 2 through $n {
+    $nth-child: append($nth-child, #{"+*"});
   }
-
-  // If a nth-child string, need to parse the string.
-  @else {
-    $n: nth(children-of-ie-nth($n), 1);
-    $nth-child: first-child;
-    @for $i from 2 through $n {
-      $nth-child: append($nth-child, #{"~*"});
-    }
-    @return #{":"}$nth-child;
+  @return #{":"}$nth-child;
+}
+@function ie-every-nth-child($n, $rows) {
+  $str: ie-nth-child($n);
+  @for $m from 2 through $rows {
+    $str: append($str, #{","} #{"&"}ie-nth-child($n*$m));
   }
+  @return $str;
 }
