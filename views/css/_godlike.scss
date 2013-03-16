@@ -6,6 +6,13 @@ $gutter-width: 2.08333333333%;
 $total-width: 100%;
 $columns: 12;
 
+.grid-container {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
 
 
 @mixin grid($x: 1, $distribution: (), $units: $columns) {

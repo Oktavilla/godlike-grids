@@ -23,18 +23,16 @@ img {
 
 .main-content {
   background: #ff0000;
-  padding: 20px 0;
+  @extend .grid-container;
   @media screen and (max-width: 720px) {
     @include grid(1);
-    background: #0000ff;
   }
   @media screen and (min-width: 720px) {
     @include grid(2, (9 3)); // 2 columns, the first column using 8 units, the second using 4
-    background: #00ff00;
   }
 }
 .boxes {
-  background: purple;
+  @extend .grid-container;
   @include grid(2, (), 9);
 }
 
