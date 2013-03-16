@@ -8,6 +8,19 @@ img {
   max-width: 960px;
   margin: 0 auto;
 }
+
+.header {
+  background: #00ff00;
+  margin: 0 0 20px 0;
+  @extend .grid-container;
+  @media screen and (max-width: 720px) {
+    @include grid(1);
+  }
+  @media screen and (min-width: 720px) {
+    @include grid(2); // 2 columns
+  }
+}
+
 .main-content {
   background: #ff0000;
   padding: 20px 0;
